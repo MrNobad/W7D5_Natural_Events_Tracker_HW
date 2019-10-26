@@ -1,28 +1,46 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Natural Events</h1>
+    <h2>The Earth Observatory Natural Event Tracker (EONET)</h2>
+    <li v-for="(title, value) in eventData">
+          <span>{{ title }}</span>
+        </li>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import {eventBus} from './main.js'
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
-  }
+  data() {
+    return {
+      eventData: []
+
+    }
+  },
+
+  mounted(){
+    fetch('https://eonet.sci.gsfc.nasa.gov/api/v2.1/events')
+    .then(response => response.json())
+    .then(res => this.eventData = this.transformEvents(res.events))
+
+  },
+  methods: {
+    transformEvents(arr){
+      return arr.map((event) => {
+        return [event.title, event.description, event.link, event.categories, event.sources, event.geometries]
+      })
+    }
+  },
 }
 </script>
 
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  text-align: left;
+  color: #000000;
   margin-top: 60px;
 }
 </style>
